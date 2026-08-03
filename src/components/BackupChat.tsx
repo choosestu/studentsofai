@@ -24,6 +24,18 @@ export function BackupChat({
   const inputRef = useRef<HTMLInputElement>(null);
   const send = useServerFn(sendBackupChat);
   const saveSession = useServerFn(appendConversationSession);
+  const busyRef = useRef(false);
+  const messagesRef = useRef<Msg[]>([]);
+  messagesRef.current = messages;
+  const lastSignal = useRef(0);
+
+  useEffect(() => {
+    if (autoSendSignal > lastSignal.current && autoSendText?.trim()) {
+      lastSignal.current = autoSendSignal;
+      void sendText(autoSendText);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoSendSignal, autoSendText]);
 
   async function sendText(raw: string) {
     const text = raw.trim();
@@ -51,9 +63,15 @@ export function BackupChat({
     } catch {
       setError("The connection dropped. Try again.");
     } finally {
+      busyRef.current = false;
       setBusy(false);
       inputRef.current?.focus();
     }
+  }
+
+  function submit(e: React.FormEvent) {
+    e.preventDefault();
+    void sendText(input);
   }
 
   async function endSession() {
