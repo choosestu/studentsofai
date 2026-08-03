@@ -130,22 +130,31 @@ function PromptPage() {
         <pre className="surface mt-4 overflow-x-auto p-5 terminal text-sm leading-relaxed whitespace-pre-wrap text-primary">
           {prompt?.body}
         </pre>
-        <button
-          className="btn-matrix mt-5"
-          onClick={async () => {
-            await navigator.clipboard.writeText(prompt?.body ?? "");
-            setCopied(true);
-            toast.success("Copied.");
-            setTimeout(() => setCopied(false), 2500);
-          }}
-        >
-          {copied ? "Copied ✓" : "Copy Prompt"}
-        </button>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            className="btn-matrix"
+            onClick={async () => {
+              await navigator.clipboard.writeText(prompt?.body ?? "");
+              setCopied(true);
+              toast.success("Copied.");
+              setTimeout(() => setCopied(false), 2500);
+            }}
+          >
+            {copied ? "Copied ✓" : "Copy Prompt"}
+          </button>
+          <button
+            className="btn-matrix"
+            onClick={() => chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          >
+            Use In-App
+          </button>
+        </div>
         <p className="mt-4 text-xs leading-relaxed text-dim">
           Open ChatGPT (chatgpt.com) or Claude (claude.ai). Start a new conversation. Paste this in.
           Let it go where it goes.
         </p>
       </section>
+
 
       <section className="mt-12">
         <h2 className="terminal text-sm text-foreground">
