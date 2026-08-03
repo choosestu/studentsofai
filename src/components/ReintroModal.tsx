@@ -14,11 +14,11 @@ export function ReintroModal() {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 px-4 py-10 backdrop-blur-sm">
       <div className="surface max-h-full w-full max-w-2xl overflow-y-auto p-6 sm:p-10">
-        <h2 className="terminal text-2xl text-primary glow-text">We are starting fresh.</h2>
+        <h2 className="terminal text-2xl text-primary glow-text">I am starting this fresh.</h2>
         <div className="mt-6 space-y-4 text-sm leading-relaxed text-foreground/85">
           <p>
             If you have already used Prompt 1 or Prompt 2, that is okay. What happened in those
-            conversations belongs to you and was not wasted. But we are opening a new door now, with
+            conversations belongs to you and was not wasted. But I am opening a new door now, with
             a cleaner intention behind it.
           </p>
           <p>
@@ -35,7 +35,7 @@ export function ReintroModal() {
             setShow(false);
           }}
         >
-          Let&apos;s go
+          I&apos;m in
         </button>
       </div>
     </div>

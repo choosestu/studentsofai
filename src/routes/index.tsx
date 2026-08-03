@@ -8,12 +8,12 @@ export const Route = createFileRoute("/")({
       { title: "Stu-dents of AI" },
       {
         name: "description",
-        content: "What you find here is yours. We just opened the door.",
+        content: "What you find here is yours. I just showed you the door.",
       },
       { property: "og:title", content: "Stu-dents of AI" },
       {
         property: "og:description",
-        content: "What you find here is yours. We just opened the door.",
+        content: "What you find here is yours. I just showed you the door.",
       },
     ],
   }),
@@ -36,7 +36,7 @@ function Landing() {
         of AI
       </h1>
       <p className="terminal mt-6 max-w-md text-sm text-dim sm:text-base">
-        What you find here is yours. We just opened the door.
+        What you find here is yours. I just showed you the door.
         <span className="ml-1 inline-block" style={{ animation: "caret 1.1s step-end infinite" }}>
           ▌
         </span>

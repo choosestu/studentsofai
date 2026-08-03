@@ -116,7 +116,7 @@ function PromptPage() {
       >
         <p className="text-sm leading-relaxed text-foreground/80">
           This prompt is designed for your own ChatGPT or Claude account. What you discover there is
-          private. It belongs to you. We hope you will share what feels worth sharing, but that is
+          private. It belongs to you. I hope you will share what feels worth sharing, but that is
           always your choice.
         </p>
         <p className="mt-4 text-sm leading-relaxed text-dim">
