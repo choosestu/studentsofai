@@ -71,7 +71,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Stu-dents of AI" },
       {
         name: "description",
-        content: "A private space for five people and their own conversations with AI.",
+        content: "What you find here is yours. I just showed you the door.",
       },
       { property: "og:title", content: "Stu-dents of AI" },
       {
@@ -80,6 +80,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Stu-dents of AI" },
+      { name: "twitter:description", content: "What you find here is yours. I just showed you the door." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cd123d52-75fb-4143-9b93-acf818c2a32f/id-preview-5591cfb7--661d1f27-a849-4d28-a3f0-acd1e164e6ec.lovable.app-1785792037032.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/cd123d52-75fb-4143-9b93-acf818c2a32f/id-preview-5591cfb7--661d1f27-a849-4d28-a3f0-acd1e164e6ec.lovable.app-1785792037032.png" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
