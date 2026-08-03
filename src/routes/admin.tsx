@@ -90,7 +90,7 @@ function Admin() {
       note: entry?.note || null,
       awarded_by: user!.id,
     });
-    if (error) return toast.error("Could not award points.");
+    if (error) { toast.error("Could not award points."); return; }
     if (entry?.note) {
       await supabase.from("submissions").update({ admin_comment: entry.note }).eq("id", submissionId);
     }
@@ -199,7 +199,7 @@ function Admin() {
                   .from("prompts")
                   .update({ status: "active", unlock_date: new Date().toISOString() })
                   .eq("id", lockedPrompt.id);
-                if (error) return toast.error("Could not unlock.");
+                if (error) { toast.error("Could not unlock."); return; }
                 toast.success("Prompt 3 unlocked.");
                 refresh();
               }}
@@ -224,7 +224,7 @@ function Admin() {
             disabled={!challengeTitle.trim()}
             onClick={async () => {
               const { error } = await supabase.from("challenges").insert({ title: challengeTitle.trim() });
-              if (error) return toast.error("Could not open the vote.");
+              if (error) { toast.error("Could not open the vote."); return; }
               setChallengeTitle("");
               toast.success("Vote opened.");
               refresh();
