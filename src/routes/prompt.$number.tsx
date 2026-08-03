@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,6 +27,7 @@ function PromptPage() {
   const [content, setContent] = useState("");
   const [share, setShare] = useState(false);
   const [busy, setBusy] = useState(false);
+  const chatRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -130,22 +131,31 @@ function PromptPage() {
         <pre className="surface mt-4 overflow-x-auto p-5 terminal text-sm leading-relaxed whitespace-pre-wrap text-primary">
           {prompt?.body}
         </pre>
-        <button
-          className="btn-matrix mt-5"
-          onClick={async () => {
-            await navigator.clipboard.writeText(prompt?.body ?? "");
-            setCopied(true);
-            toast.success("Copied.");
-            setTimeout(() => setCopied(false), 2500);
-          }}
-        >
-          {copied ? "Copied ✓" : "Copy Prompt"}
-        </button>
+        <div className="mt-5 flex flex-wrap gap-3">
+          <button
+            className="btn-matrix"
+            onClick={async () => {
+              await navigator.clipboard.writeText(prompt?.body ?? "");
+              setCopied(true);
+              toast.success("Copied.");
+              setTimeout(() => setCopied(false), 2500);
+            }}
+          >
+            {copied ? "Copied ✓" : "Copy Prompt"}
+          </button>
+          <button
+            className="btn-matrix"
+            onClick={() => chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+          >
+            Use In-App
+          </button>
+        </div>
         <p className="mt-4 text-xs leading-relaxed text-dim">
           Open ChatGPT (chatgpt.com) or Claude (claude.ai). Start a new conversation. Paste this in.
           Let it go where it goes.
         </p>
       </section>
+
 
       <section className="mt-12">
         <h2 className="terminal text-sm text-foreground">
@@ -195,7 +205,19 @@ function PromptPage() {
         )}
       </section>
 
-      <BackupChat />
+      <section ref={chatRef} className="mt-12 scroll-mt-6">
+        <h2 className="terminal text-sm tracking-widest text-dim uppercase">
+          In-App Conversation
+        </h2>
+        <BackupChat promptNumber={Number(prompt?.number ?? number)} />
+      </section>
+
+      <div className="mt-12 border-t border-border pt-8">
+        <Link to="/dashboard" className="btn-matrix inline-block">
+          Done
+        </Link>
+      </div>
+
     </main>
   );
 }

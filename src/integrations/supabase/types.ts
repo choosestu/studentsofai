@@ -35,6 +35,33 @@ export type Database = {
         }
         Relationships: []
       }
+      conversation_logs: {
+        Row: {
+          created_at: string
+          id: string
+          prompt_number: number
+          sessions: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          prompt_number: number
+          sessions?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          prompt_number?: number
+          sessions?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       points: {
         Row: {
           amount: number

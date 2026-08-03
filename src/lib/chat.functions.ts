@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
 const schema = z.object({
+  promptNumber: z.number().int().min(1).max(999).optional(),
   messages: z
     .array(
       z.object({
@@ -23,9 +24,49 @@ const SYSTEM_PROMPT =
 export const sendBackupChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: unknown) => schema.parse(data))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured yet.");
+
+    const system: Array<{ role: "system"; content: string }> = [
+      { role: "system", content: SYSTEM_PROMPT },
+    ];
+
+    if (data.promptNumber) {
+      const { data: rows } = await context.supabase
+        .from("conversation_logs")
+        .select("prompt_number, sessions")
+        .eq("user_id", context.userId)
+        .lte("prompt_number", data.promptNumber)
+        .order("prompt_number", { ascending: true });
+
+      const parts: string[] = [];
+      for (const row of rows ?? []) {
+        const sessions = (Array.isArray(row.sessions) ? row.sessions : []) as Array<{
+          started_at?: string;
+          messages?: Array<{ role: string; content: string }>;
+        }>;
+        for (const s of sessions) {
+          parts.push(
+            `--- Prompt ${row.prompt_number} (${s.started_at ?? ""}) ---\n` +
+              (s.messages ?? [])
+                .map((m) => `${m.role === "user" ? "Them" : "You"}: ${m.content}`)
+                .join("\n"),
+          );
+        }
+      }
+      const prior = parts.join("\n\n");
+      if (prior) {
+        const trimmed = prior.length > 24000 ? prior.slice(-24000) : prior;
+        system.push({
+          role: "system",
+          content:
+            "Here is the record of this person's earlier sessions. Use it silently — never make them " +
+            "re-explain what they already told you, and do not recite this back at them.\n\n" +
+            trimmed,
+        });
+      }
+    }
 
     const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -35,7 +76,7 @@ export const sendBackupChat = createServerFn({ method: "POST" })
       },
       body: JSON.stringify({
         model: "google/gemini-3.5-flash",
-        messages: [{ role: "system", content: SYSTEM_PROMPT }, ...data.messages],
+        messages: [...system, ...data.messages],
       }),
     });
 
