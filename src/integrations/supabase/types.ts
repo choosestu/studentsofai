@@ -106,18 +106,21 @@ export type Database = {
           display_name: string
           id: string
           last_active_at: string
+          total_points: number
         }
         Insert: {
           created_at?: string
           display_name: string
           id: string
           last_active_at?: string
+          total_points?: number
         }
         Update: {
           created_at?: string
           display_name?: string
           id?: string
           last_active_at?: string
+          total_points?: number
         }
         Relationships: []
       }
