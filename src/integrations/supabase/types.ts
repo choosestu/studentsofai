@@ -106,18 +106,21 @@ export type Database = {
           display_name: string
           id: string
           last_active_at: string
+          total_points: number
         }
         Insert: {
           created_at?: string
           display_name: string
           id: string
           last_active_at?: string
+          total_points?: number
         }
         Update: {
           created_at?: string
           display_name?: string
           id?: string
           last_active_at?: string
+          total_points?: number
         }
         Relationships: []
       }
@@ -244,14 +247,7 @@ export type Database = {
       }
     }
     Views: {
-      leaderboard: {
-        Row: {
-          display_name: string | null
-          total_points: number | null
-          user_id: string | null
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Functions: {
       has_role: {
