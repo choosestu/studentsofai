@@ -16,8 +16,8 @@ function column(seed: number, length: number) {
 export function MatrixRain() {
   const columns = useMemo(
     () =>
-      Array.from({ length: 26 }, (_, i) => ({
-        left: (i / 26) * 100 + (i % 3) * 0.4,
+      Array.from({ length: 39 }, (_, i) => ({
+        left: (i / 39) * 100 + (i % 3) * 0.3,
         duration: 26 + ((i * 7) % 22),
         delay: -((i * 5) % 30),
         text: column(i + 3, 34),
@@ -28,7 +28,8 @@ export function MatrixRain() {
   return (
     <div
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
+      translate="no"
+      className="notranslate pointer-events-none fixed inset-0 z-0 overflow-hidden select-none"
     >
       {columns.map((c, i) => (
         <div
@@ -36,7 +37,8 @@ export function MatrixRain() {
           className="terminal absolute top-0 text-[11px] leading-[1.25] text-primary"
           style={{
             left: `${c.left}%`,
-            opacity: 0.055,
+            opacity: 0.0825,
+            textShadow: "0 0 6px currentColor",
             writingMode: "vertical-rl",
             animation: `rain-fall ${c.duration}s linear ${c.delay}s infinite`,
           }}
