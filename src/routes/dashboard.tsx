@@ -39,11 +39,10 @@ function Dashboard() {
     queryKey: ["dashboard", user?.id],
     enabled: !!user,
     queryFn: async () => {
-      const [prompts, mine, profiles, points, feed] = await Promise.all([
+      const [prompts, mine, profiles, feed] = await Promise.all([
         supabase.from("prompts").select("*").order("number"),
         supabase.from("submissions").select("id, prompt_id, created_at").eq("user_id", user!.id),
-        supabase.from("profiles").select("id, display_name"),
-        supabase.from("points").select("user_id, amount"),
+        supabase.from("profiles").select("id, display_name, total_points"),
         supabase
           .from("submissions")
           .select("id, user_id, content, created_at")
@@ -55,19 +54,17 @@ function Dashboard() {
         prompts: prompts.data ?? [],
         mine: mine.data ?? [],
         profiles: profiles.data ?? [],
-        points: points.data ?? [],
         feed: feed.data ?? [],
       };
     },
   });
 
-  const totals = new Map<string, number>();
-  (data?.points ?? []).forEach((p) => totals.set(p.user_id, (totals.get(p.user_id) ?? 0) + p.amount));
   const board = (data?.profiles ?? [])
-    .map((p) => ({ ...p, total: totals.get(p.id) ?? 0 }))
+    .map((p) => ({ ...p, total: p.total_points ?? 0 }))
     .sort((a, b) => b.total - a.total);
   const myRank = board.findIndex((b) => b.id === user?.id) + 1;
-  const myPoints = totals.get(user?.id ?? "") ?? 0;
+  const myPoints = board.find((b) => b.id === user?.id)?.total ?? 0;
+
   const nameOf = (id: string) => data?.profiles.find((p) => p.id === id)?.display_name ?? "someone";
 
   if (loading || !user) {
