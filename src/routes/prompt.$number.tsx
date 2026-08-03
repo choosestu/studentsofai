@@ -28,6 +28,7 @@ function PromptPage() {
   const [share, setShare] = useState(false);
   const [busy, setBusy] = useState(false);
   const chatRef = useRef<HTMLElement>(null);
+  const [autoSend, setAutoSend] = useState<{ text: string; signal: number }>({ text: "", signal: 0 });
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -145,7 +146,10 @@ function PromptPage() {
           </button>
           <button
             className="btn-matrix"
-            onClick={() => chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            onClick={() => {
+              if (prompt?.body) setAutoSend({ text: prompt.body, signal: autoSend.signal + 1 });
+              chatRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
           >
             Use In-App
           </button>
@@ -209,7 +213,11 @@ function PromptPage() {
         <h2 className="terminal text-sm tracking-widest text-dim uppercase">
           In-App Conversation
         </h2>
-        <BackupChat promptNumber={Number(prompt?.number ?? number)} />
+        <BackupChat
+          promptNumber={Number(prompt?.number ?? number)}
+          autoSendText={autoSend.text}
+          autoSendSignal={autoSend.signal}
+        />
       </section>
 
       <div className="mt-12 border-t border-border pt-8">
