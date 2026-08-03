@@ -37,8 +37,8 @@ export function MatrixRain() {
           className="terminal absolute top-0 text-[11px] leading-[1.25] text-primary"
           style={{
             left: `${c.left}%`,
-            opacity: 0.0825,
-            textShadow: "0 0 6px currentColor",
+            opacity: 0.165,
+            textShadow: "0 0 10px currentColor, 0 0 18px currentColor",
             writingMode: "vertical-rl",
             animation: `rain-fall ${c.duration}s linear ${c.delay}s infinite`,
           }}
