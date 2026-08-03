@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -27,6 +27,7 @@ function PromptPage() {
   const [content, setContent] = useState("");
   const [share, setShare] = useState(false);
   const [busy, setBusy] = useState(false);
+  const chatRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth" });
@@ -204,7 +205,19 @@ function PromptPage() {
         )}
       </section>
 
-      <BackupChat />
+      <section ref={chatRef} className="mt-12 scroll-mt-6">
+        <h2 className="terminal text-sm tracking-widest text-dim uppercase">
+          In-App Conversation
+        </h2>
+        <BackupChat promptNumber={Number(prompt?.number ?? number)} />
+      </section>
+
+      <div className="mt-12 border-t border-border pt-8">
+        <Link to="/dashboard" className="btn-matrix inline-block">
+          Done
+        </Link>
+      </div>
+
     </main>
   );
 }
