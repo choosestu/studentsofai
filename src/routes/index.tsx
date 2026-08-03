@@ -1,24 +1,49 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/useAuth";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Stu-dents of AI" },
+      {
+        name: "description",
+        content: "What you find here is yours. We just opened the door.",
+      },
+      { property: "og:title", content: "Stu-dents of AI" },
+      {
+        property: "og:description",
+        content: "What you find here is yours. We just opened the door.",
+      },
+    ],
+  }),
+  component: Landing,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Landing() {
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && user) navigate({ to: "/dashboard" });
+  }, [loading, user, navigate]);
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="flex min-h-screen flex-col items-center justify-center px-6 text-center">
+      <h1 className="terminal text-4xl leading-tight text-primary glow-text sm:text-6xl md:text-7xl">
+        Stu-dents
+        <span className="text-dim">_</span>
+        of AI
+      </h1>
+      <p className="terminal mt-6 max-w-md text-sm text-dim sm:text-base">
+        What you find here is yours. We just opened the door.
+        <span className="ml-1 inline-block" style={{ animation: "caret 1.1s step-end infinite" }}>
+          ▌
+        </span>
+      </p>
+      <button className="btn-matrix mt-12" onClick={() => navigate({ to: "/auth" })}>
+        Enter
+      </button>
+    </main>
   );
 }
