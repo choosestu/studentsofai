@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { sendBackupChat } from "@/lib/chat.functions";
 import { appendConversationSession } from "@/lib/conversation.functions";
@@ -6,7 +6,15 @@ import { toast } from "sonner";
 
 type Msg = { role: "user" | "assistant"; content: string; at: string };
 
-export function BackupChat({ promptNumber }: { promptNumber: number }) {
+export function BackupChat({
+  promptNumber,
+  autoSendText,
+  autoSendSignal = 0,
+}: {
+  promptNumber: number;
+  autoSendText?: string;
+  autoSendSignal?: number;
+}) {
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -17,11 +25,14 @@ export function BackupChat({ promptNumber }: { promptNumber: number }) {
   const send = useServerFn(sendBackupChat);
   const saveSession = useServerFn(appendConversationSession);
 
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    const text = input.trim();
-    if (!text || busy) return;
-    const next: Msg[] = [...messages, { role: "user", content: text, at: new Date().toISOString() }];
+  async function sendText(raw: string) {
+    const text = raw.trim();
+    if (!text || busyRef.current) return;
+    busyRef.current = true;
+    const next: Msg[] = [
+      ...messagesRef.current,
+      { role: "user", content: text, at: new Date().toISOString() },
+    ];
     setMessages(next);
     setInput("");
     setBusy(true);
