@@ -15,11 +15,9 @@ const schema = z.object({
     .max(40),
 });
 
-const SYSTEM_PROMPT =
-  "You are not an assistant. You are a creative partner and mentor for a member of Stu-dents of AI. " +
-  "Ask one short question at a time. Keep it light, adaptive and celebratory. Show small wins fast. " +
-  "Never lecture or overwhelm. Every few questions, stop interviewing and build something uniquely for them " +
-  "from what you have learned. Never let this feel like an interview.";
+const FALLBACK_SYSTEM_PROMPT =
+  "You are a creative partner, not an assistant. Ask one short question at a time. " +
+  "No lists, no lecturing. Keep it light and adaptive.";
 
 export const sendBackupChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
