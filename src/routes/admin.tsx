@@ -100,6 +100,12 @@ function Admin() {
   }
 
   const lockedPrompt = data?.prompts.find((p) => p.status === "locked");
+  const unseenCount = (data?.submissions ?? []).filter((s) => s.attachment_path && !s.viewed_at).length;
+
+  async function markViewed(id: string) {
+    await supabase.from("submissions").update({ viewed_at: new Date().toISOString() }).eq("id", id);
+    refresh();
+  }
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-10 sm:px-8">
