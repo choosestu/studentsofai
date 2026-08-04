@@ -60,7 +60,8 @@ export function BackupChat({
         ...next,
         { role: "assistant", content: res.reply, at: new Date().toISOString() },
       ]);
-    } catch {
+    } catch (err) {
+      console.error("[BackupChat] send failed", err);
       setError("The connection dropped. Try again.");
     } finally {
       busyRef.current = false;
