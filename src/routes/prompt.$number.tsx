@@ -27,6 +27,8 @@ function PromptPage() {
   const [content, setContent] = useState("");
   const [share, setShare] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLElement>(null);
   const [autoSend, setAutoSend] = useState<{ text: string; signal: number }>({ text: "", signal: 0 });
 
@@ -61,11 +63,28 @@ function PromptPage() {
     e.preventDefault();
     if (!content.trim() || !prompt) return;
     setBusy(true);
+
+    let attachmentPath: string | null = null;
+    if (file) {
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+      const path = `${user!.id}/${Date.now()}-${safeName}`;
+      const { error: upErr } = await supabase.storage
+        .from("submission-attachments")
+        .upload(path, file, { contentType: file.type || "application/octet-stream" });
+      if (upErr) {
+        setBusy(false);
+        toast.error("The file did not upload. Try again.");
+        return;
+      }
+      attachmentPath = path;
+    }
+
     const { error } = await supabase.from("submissions").insert({
       user_id: user!.id,
       prompt_id: prompt.id,
       content: content.trim(),
       shared_with_family: share,
+      attachment_path: attachmentPath,
     });
     setBusy(false);
     if (error) {
@@ -74,9 +93,12 @@ function PromptPage() {
     }
     setContent("");
     setShare(false);
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     toast.success("Received. Thank you.");
     qc.invalidateQueries({ queryKey: ["my-submissions"] });
   }
+
 
   if (loading || !user) {
     return (
@@ -175,6 +197,27 @@ function PromptPage() {
             onChange={(e) => setContent(e.target.value)}
             placeholder="what happened in there..."
           />
+          <div className="terminal mt-3 text-xs text-dim">
+            <label className="block">
+              <span className="block">Attach a file (optional, max 10MB) — only Stu sees this.</span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="field mt-2 text-xs"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  if (f && f.size > 10 * 1024 * 1024) {
+                    toast.error("That file is over 10MB.");
+                    e.target.value = "";
+                    setFile(null);
+                    return;
+                  }
+                  setFile(f);
+                }}
+              />
+            </label>
+            {file && <p className="mt-2 text-primary">{file.name}</p>}
+          </div>
           <label className="terminal mt-3 flex items-center gap-3 text-xs text-dim">
             <input
               type="checkbox"
@@ -184,6 +227,7 @@ function PromptPage() {
             />
             Share with family
           </label>
+
           <button className="btn-matrix mt-5" disabled={busy || !content.trim()}>
             Share
           </button>
