@@ -104,7 +104,14 @@ function Admin() {
   return (
     <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-10 sm:px-8">
       <div className="flex items-center justify-between">
-        <h1 className="terminal text-2xl text-primary glow-text">Control</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="terminal text-2xl text-primary glow-text">Control</h1>
+          {unseenCount > 0 && (
+            <span className="terminal border border-primary px-2 py-1 text-xs text-primary glow-text">
+              {unseenCount} new attachment{unseenCount > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
         <Link to="/dashboard" className="btn-ghost link-pulse">
           dashboard ›
         </Link>
