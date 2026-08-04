@@ -36,7 +36,7 @@ function Dashboard() {
   }, [loading, user, navigate]);
 
   const { data } = useQuery({
-    queryKey: ["dashboard", user?.id],
+    queryKey: ["dashboard", user?.id, isAdmin],
     enabled: !!user,
     queryFn: async () => {
       const [prompts, mine, profiles, feed, unseen] = await Promise.all([
