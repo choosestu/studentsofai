@@ -138,14 +138,15 @@ function PromptPage() {
         style={{ borderLeft: "3px solid var(--color-primary)" }}
       >
         <p className="text-sm leading-relaxed text-foreground/80">
-          This prompt is designed for your own ChatGPT or Claude account. What you discover there is
-          private. It belongs to you. I hope you will share what feels worth sharing, but that is
-          always your choice.
+          This prompt is designed for you to cut and paste into your own ChatGPT or Claude account. What you discover there is
+          private. It belongs to you.
         </p>
         <p className="mt-4 text-sm leading-relaxed text-dim">
-          If you hit your daily message limit on your free account, you can use the text box at the
-          bottom of this page instead. It connects to a shared account with memory, so your
-          conversation will carry forward.
+          If you hit your daily message limit on your free account, or you'd simply rather use it, you can use the text box at the
+          bottom of this page instead. Your conversation will be saved when you end the session, so it carries forward next time.
+        </p>
+        <p className="mt-4 text-sm leading-relaxed text-dim">
+          I hope you will share what feels worth sharing, but that is always your choice.
         </p>
       </div>
 
