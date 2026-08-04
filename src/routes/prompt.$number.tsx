@@ -197,6 +197,27 @@ function PromptPage() {
             onChange={(e) => setContent(e.target.value)}
             placeholder="what happened in there..."
           />
+          <div className="terminal mt-3 text-xs text-dim">
+            <label className="block">
+              <span className="block">Attach a file (optional, max 10MB) — only Stu sees this.</span>
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="field mt-2 text-xs"
+                onChange={(e) => {
+                  const f = e.target.files?.[0] ?? null;
+                  if (f && f.size > 10 * 1024 * 1024) {
+                    toast.error("That file is over 10MB.");
+                    e.target.value = "";
+                    setFile(null);
+                    return;
+                  }
+                  setFile(f);
+                }}
+              />
+            </label>
+            {file && <p className="mt-2 text-primary">{file.name}</p>}
+          </div>
           <label className="terminal mt-3 flex items-center gap-3 text-xs text-dim">
             <input
               type="checkbox"
@@ -206,6 +227,7 @@ function PromptPage() {
             />
             Share with family
           </label>
+
           <button className="btn-matrix mt-5" disabled={busy || !content.trim()}>
             Share
           </button>
