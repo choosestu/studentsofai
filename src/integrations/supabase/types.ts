@@ -160,6 +160,7 @@ export type Database = {
       submissions: {
         Row: {
           admin_comment: string | null
+          attachment_path: string | null
           content: string
           created_at: string
           id: string
@@ -169,6 +170,7 @@ export type Database = {
         }
         Insert: {
           admin_comment?: string | null
+          attachment_path?: string | null
           content: string
           created_at?: string
           id?: string
@@ -178,6 +180,7 @@ export type Database = {
         }
         Update: {
           admin_comment?: string | null
+          attachment_path?: string | null
           content?: string
           created_at?: string
           id?: string
