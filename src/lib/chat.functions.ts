@@ -26,8 +26,18 @@ export const sendBackupChat = createServerFn({ method: "POST" })
     const apiKey = process.env["LOVABLE_API_KEY"];
     if (!apiKey) throw new Error("AI is not configured yet.");
 
+    let promptBody = "";
+    if (data.promptNumber) {
+      const { data: promptRow } = await context.supabase
+        .from("prompts")
+        .select("body")
+        .eq("number", data.promptNumber)
+        .maybeSingle();
+      promptBody = (promptRow?.body ?? "").trim();
+    }
+
     const system: Array<{ role: "system"; content: string }> = [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: promptBody || FALLBACK_SYSTEM_PROMPT },
     ];
 
     if (data.promptNumber) {
