@@ -167,6 +167,7 @@ export type Database = {
           prompt_id: string
           shared_with_family: boolean
           user_id: string
+          viewed_at: string | null
         }
         Insert: {
           admin_comment?: string | null
@@ -177,6 +178,7 @@ export type Database = {
           prompt_id: string
           shared_with_family?: boolean
           user_id: string
+          viewed_at?: string | null
         }
         Update: {
           admin_comment?: string | null
@@ -187,6 +189,7 @@ export type Database = {
           prompt_id?: string
           shared_with_family?: boolean
           user_id?: string
+          viewed_at?: string | null
         }
         Relationships: [
           {

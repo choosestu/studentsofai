@@ -100,11 +100,24 @@ function Admin() {
   }
 
   const lockedPrompt = data?.prompts.find((p) => p.status === "locked");
+  const unseenCount = (data?.submissions ?? []).filter((s) => s.attachment_path && !s.viewed_at).length;
+
+  async function markViewed(id: string) {
+    await supabase.from("submissions").update({ viewed_at: new Date().toISOString() }).eq("id", id);
+    refresh();
+  }
 
   return (
     <main className="mx-auto min-h-screen w-full max-w-5xl px-4 py-10 sm:px-8">
       <div className="flex items-center justify-between">
-        <h1 className="terminal text-2xl text-primary glow-text">Control</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="terminal text-2xl text-primary glow-text">Control</h1>
+          {unseenCount > 0 && (
+            <span className="terminal border border-primary px-2 py-1 text-xs text-primary glow-text">
+              {unseenCount} new attachment{unseenCount > 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
         <Link to="/dashboard" className="btn-ghost link-pulse">
           dashboard ›
         </Link>
@@ -136,6 +149,9 @@ function Admin() {
               <p className="terminal text-xs text-dim">
                 {nameOf(s.user_id)} · prompt {promptOf(s.prompt_id)?.number} ·{" "}
                 {new Date(s.created_at).toLocaleString()}
+                {s.attachment_path && !s.viewed_at && (
+                  <span className="ml-2 text-primary glow-text">● new</span>
+                )}
               </p>
               <p className="terminal mt-2 text-sm whitespace-pre-wrap text-foreground/85">{s.content}</p>
 
@@ -147,6 +163,7 @@ function Admin() {
                       .from("submission-attachments")
                       .createSignedUrl(s.attachment_path!, 60 * 60);
                     if (error || !signed) { toast.error("Could not open that file."); return; }
+                    if (!s.viewed_at) await markViewed(s.id);
                     window.open(signed.signedUrl, "_blank", "noopener");
                   }}
                 >

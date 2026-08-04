@@ -36,10 +36,10 @@ function Dashboard() {
   }, [loading, user, navigate]);
 
   const { data } = useQuery({
-    queryKey: ["dashboard", user?.id],
+    queryKey: ["dashboard", user?.id, isAdmin],
     enabled: !!user,
     queryFn: async () => {
-      const [prompts, mine, profiles, feed] = await Promise.all([
+      const [prompts, mine, profiles, feed, unseen] = await Promise.all([
         supabase.from("prompts").select("*").order("number"),
         supabase.from("submissions").select("id, prompt_id, created_at").eq("user_id", user!.id),
         supabase.from("profiles").select("id, display_name, total_points"),
@@ -49,12 +49,20 @@ function Dashboard() {
           .eq("shared_with_family", true)
           .order("created_at", { ascending: false })
           .limit(20),
+        isAdmin
+          ? supabase
+              .from("submissions")
+              .select("id", { count: "exact", head: true })
+              .not("attachment_path", "is", null)
+              .is("viewed_at", null)
+          : Promise.resolve({ count: 0 }),
       ]);
       return {
         prompts: prompts.data ?? [],
         mine: mine.data ?? [],
         profiles: profiles.data ?? [],
         feed: feed.data ?? [],
+        unseen: unseen.count ?? 0,
       };
     },
   });
@@ -90,6 +98,9 @@ function Dashboard() {
           {isAdmin && (
             <Link to="/admin" className="btn-ghost link-pulse">
               admin
+              {(data?.unseen ?? 0) > 0 && (
+                <span className="ml-2 text-primary glow-text">● {data?.unseen}</span>
+              )}
             </Link>
           )}
           <button className="btn-ghost link-pulse" onClick={() => signOut()}>
