@@ -92,7 +92,7 @@ export const sendBackupChat = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3.5-flash",
+        model: "openai/gpt-5.5",
         messages: [...system, ...data.messages],
       }),
     });
