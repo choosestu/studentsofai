@@ -98,6 +98,9 @@ function Dashboard() {
           {isAdmin && (
             <Link to="/admin" className="btn-ghost link-pulse">
               admin
+              {(data?.unseen ?? 0) > 0 && (
+                <span className="ml-2 text-primary glow-text">● {data?.unseen}</span>
+              )}
             </Link>
           )}
           <button className="btn-ghost link-pulse" onClick={() => signOut()}>
