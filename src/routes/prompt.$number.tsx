@@ -63,11 +63,28 @@ function PromptPage() {
     e.preventDefault();
     if (!content.trim() || !prompt) return;
     setBusy(true);
+
+    let attachmentPath: string | null = null;
+    if (file) {
+      const safeName = file.name.replace(/[^\w.\-]+/g, "_");
+      const path = `${user!.id}/${Date.now()}-${safeName}`;
+      const { error: upErr } = await supabase.storage
+        .from("submission-attachments")
+        .upload(path, file, { contentType: file.type || "application/octet-stream" });
+      if (upErr) {
+        setBusy(false);
+        toast.error("The file did not upload. Try again.");
+        return;
+      }
+      attachmentPath = path;
+    }
+
     const { error } = await supabase.from("submissions").insert({
       user_id: user!.id,
       prompt_id: prompt.id,
       content: content.trim(),
       shared_with_family: share,
+      attachment_path: attachmentPath,
     });
     setBusy(false);
     if (error) {
@@ -76,9 +93,12 @@ function PromptPage() {
     }
     setContent("");
     setShare(false);
+    setFile(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
     toast.success("Received. Thank you.");
     qc.invalidateQueries({ queryKey: ["my-submissions"] });
   }
+
 
   if (loading || !user) {
     return (
