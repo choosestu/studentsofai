@@ -62,9 +62,7 @@ export function BackupChat({
       ]);
     } catch (err) {
       console.error("[BackupChat] send failed", err);
-      const detail =
-        err instanceof Error ? err.message : typeof err === "string" ? err : JSON.stringify(err);
-      setError(`The connection dropped. (${detail})`);
+      setError("The connection dropped. Try again.");
     } finally {
       busyRef.current = false;
       setBusy(false);
