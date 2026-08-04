@@ -149,6 +149,9 @@ function Admin() {
               <p className="terminal text-xs text-dim">
                 {nameOf(s.user_id)} · prompt {promptOf(s.prompt_id)?.number} ·{" "}
                 {new Date(s.created_at).toLocaleString()}
+                {s.attachment_path && !s.viewed_at && (
+                  <span className="ml-2 text-primary glow-text">● new</span>
+                )}
               </p>
               <p className="terminal mt-2 text-sm whitespace-pre-wrap text-foreground/85">{s.content}</p>
 
@@ -160,6 +163,7 @@ function Admin() {
                       .from("submission-attachments")
                       .createSignedUrl(s.attachment_path!, 60 * 60);
                     if (error || !signed) { toast.error("Could not open that file."); return; }
+                    if (!s.viewed_at) await markViewed(s.id);
                     window.open(signed.signedUrl, "_blank", "noopener");
                   }}
                 >
