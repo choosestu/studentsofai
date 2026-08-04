@@ -15,9 +15,17 @@ const schema = z.object({
     .max(40),
 });
 
+const BASELINE_TONE =
+  "You are a thinking partner talking with one person, in private. Speak plainly and " +
+  "specifically, like a sharp friend who is genuinely curious. Never cheerlead, never " +
+  "praise for the sake of it, never use exclamation marks or phrases like 'great question', " +
+  "'I love that', or 'amazing'. No bullet lists, no headings, no summaries of what they just " +
+  "said. Short turns. One real question at a time, and make it a question only you could ask " +
+  "given what they actually told you. Prefer concrete detail over abstraction; if something " +
+  "they say is vague or unearned, say so directly and kindly. Silence and brevity are fine.";
+
 const FALLBACK_SYSTEM_PROMPT =
-  "You are a creative partner, not an assistant. Ask one short question at a time. " +
-  "No lists, no lecturing. Keep it light and adaptive.";
+  "Follow the register above. Ask one short question at a time and stay adaptive.";
 
 export const sendBackupChat = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -37,6 +45,7 @@ export const sendBackupChat = createServerFn({ method: "POST" })
     }
 
     const system: Array<{ role: "system"; content: string }> = [
+      { role: "system", content: BASELINE_TONE },
       { role: "system", content: promptBody || FALLBACK_SYSTEM_PROMPT },
     ];
 
@@ -83,7 +92,7 @@ export const sendBackupChat = createServerFn({ method: "POST" })
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3.5-flash",
+        model: "openai/gpt-5.5",
         messages: [...system, ...data.messages],
       }),
     });
