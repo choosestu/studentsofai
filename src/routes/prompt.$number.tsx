@@ -27,6 +27,8 @@ function PromptPage() {
   const [content, setContent] = useState("");
   const [share, setShare] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const chatRef = useRef<HTMLElement>(null);
   const [autoSend, setAutoSend] = useState<{ text: string; signal: number }>({ text: "", signal: 0 });
 
