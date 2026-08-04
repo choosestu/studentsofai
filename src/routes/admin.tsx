@@ -139,6 +139,22 @@ function Admin() {
               </p>
               <p className="terminal mt-2 text-sm whitespace-pre-wrap text-foreground/85">{s.content}</p>
 
+              {s.attachment_path && (
+                <button
+                  className="btn-ghost link-pulse mt-3"
+                  onClick={async () => {
+                    const { data: signed, error } = await supabase.storage
+                      .from("submission-attachments")
+                      .createSignedUrl(s.attachment_path!, 60 * 60);
+                    if (error || !signed) { toast.error("Could not open that file."); return; }
+                    window.open(signed.signedUrl, "_blank", "noopener");
+                  }}
+                >
+                  ↓ {s.attachment_path.split("/").pop()}
+                </button>
+              )}
+
+
               <div className="mt-4 flex flex-wrap items-center gap-3">
                 <input
                   className="field max-w-24"
